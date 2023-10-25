@@ -3,7 +3,7 @@ package br.com.jps.cervejariaapi.business.businessImpl;
 import br.com.jps.cervejariaapi.business.ClientBusiness;
 import br.com.jps.cervejariaapi.dto.ClientDTO;
 import br.com.jps.cervejariaapi.enums.ProfileState;
-import br.com.jps.cervejariaapi.exceptions.ClientException;
+import br.com.jps.cervejariaapi.exceptions.ErrorMessageException;
 import br.com.jps.cervejariaapi.model.Address;
 import br.com.jps.cervejariaapi.model.Client;
 import br.com.jps.cervejariaapi.repository.ClientRepository;
@@ -38,7 +38,7 @@ public class ClientBusinessImpl implements ClientBusiness {
 
     @Override
     public ClientDTO clientById(Long id) {
-        Client client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente com o id + " + id + " não encontrado."));
+        Client client = clientRepository.findById(id).orElseThrow(() -> new ErrorMessageException(ErrorMessageException.Message.CLIENT_NOT_FOUND.getMessage() + id + "."));
         return new ClientDTO(client,client.getAddressList());
     }
 
@@ -47,7 +47,7 @@ public class ClientBusinessImpl implements ClientBusiness {
         if(!client.isEmpty()){
             return client;
         }
-        throw new ClientException(ClientException.Message.CLIENT_DOCUMENT_EMPTY.getMessage());
+        throw new ErrorMessageException(ErrorMessageException.Message.CLIENT_DOCUMENT_EMPTY.getMessage());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ClientBusinessImpl implements ClientBusiness {
     public ClientDTO clientUpdate(Long id, ClientDTO clientDTO) {
         Client client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente com o id + " + id + " não encontrado."));
         if(client.getProfileState() == ProfileState.DISABLED){
-            throw new ClientException(ClientException.Message.CLIENT_PROFILE_DISABLED.getMessage());
+            throw new ErrorMessageException(ErrorMessageException.Message.CLIENT_PROFILE_DISABLED.getMessage());
         }
             BeanUtils.copyProperties(clientDTO,client, "id", "userRole");
             clientRepository.save(client);

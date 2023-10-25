@@ -21,6 +21,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+    testImplementation 'org.springframework.security:spring-security-test:5.5.1'
 }
 
 java {
@@ -35,4 +37,9 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+}
+
+test {
+    useJUnitPlatform()
+    include 'br.com.jps.cervejariaapi.ClientTest.testValidClient'
 }

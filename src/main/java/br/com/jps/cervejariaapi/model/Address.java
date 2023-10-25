@@ -2,11 +2,12 @@ package br.com.jps.cervejariaapi.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Address {
 
@@ -43,7 +44,6 @@ public class Address {
     private String country;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Client.class)
-    @JoinColumn(name = "client_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "client_id")
     private Client clientId;
-
 }

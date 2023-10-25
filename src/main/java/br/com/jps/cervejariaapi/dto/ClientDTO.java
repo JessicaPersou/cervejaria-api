@@ -78,19 +78,12 @@ public class ClientDTO {
 
         this.addressList = new ArrayList<>();
 
-        addressList.forEach(item -> {
-            AddressDTO addressDTO = new AddressDTO();
-            addressDTO.setStreet(item.getStreet());
-            addressDTO.setNumber(item.getNumber());
-            addressDTO.setZipcode(item.getZipcode());
-            addressDTO.setNeighborhood(item.getNeighborhood());
-            addressDTO.setCity(item.getCity());
-            addressDTO.setState(item.getState());
-            addressDTO.setCountry(item.getCountry());
-            addressDTO.setId(item.getId());
-
-            this.addressList.add(addressDTO);
-        });
+        if (addressList != null) {
+            addressList.forEach(item -> {
+                AddressDTO addressDTO = new AddressDTO(item);
+                this.addressList.add(addressDTO);
+            });
+        }
 
     }
 

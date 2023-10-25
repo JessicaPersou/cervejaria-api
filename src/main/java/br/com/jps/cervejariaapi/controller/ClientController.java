@@ -1,6 +1,8 @@
 package br.com.jps.cervejariaapi.controller;
 
+import br.com.jps.cervejariaapi.business.AddressBusiness;
 import br.com.jps.cervejariaapi.business.ClientBusiness;
+import br.com.jps.cervejariaapi.dto.AddressDTO;
 import br.com.jps.cervejariaapi.dto.ClientDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class ClientController {
 
     @Autowired
     private ClientBusiness clientBusiness;
+
+    @Autowired
+    private AddressBusiness addressBusiness;
 
     @GetMapping
     public ResponseEntity<List<ClientDTO>> allClients(){
@@ -57,5 +62,24 @@ public class ClientController {
 
     /*** Address-Controller ***/
 
+    @GetMapping("{id}/address")
+    public ResponseEntity<List<AddressDTO>> AddressByClient(@PathVariable Long id){
+        return ResponseEntity.ok(addressBusiness.findAddressByClientId(id));
+    }
 
+    @PostMapping("{clientId}/address/")
+    public ResponseEntity<AddressDTO> newAddress(@PathVariable Long clientId, @RequestBody AddressDTO addressDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(addressBusiness.createNewAddress(clientId,addressDTO));
+    }
+
+    @PutMapping("{idClient}/address/{idAddress}")
+    public ResponseEntity<AddressDTO> updateAddress(@PathVariable Long idClient,@PathVariable Long idAddress, @RequestBody AddressDTO addressDTO){
+        return ResponseEntity.status(HttpStatus.OK).body(addressBusiness.updateAddress(idClient, idAddress, addressDTO));
+    }
+
+    @DeleteMapping("{idClient}/address/{idAddress}")
+    public ResponseEntity deleteAddress(@PathVariable Long idClient,@PathVariable Long idAddress){
+        addressBusiness.deleteAddress(idClient,idAddress);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Endereço excluído com sucesso.");
+    }
 }
