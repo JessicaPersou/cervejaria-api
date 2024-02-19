@@ -18,6 +18,7 @@ public class ErrorMessageException extends RuntimeException{
         CLIENT_NOT_FOUND("Cliente não encontrado: "),
         ADDRESS_EXCEEDED_LIMIT("Endereço não pode ser cadastrado, limite excedido. "),
         ADDRESS_NOT_UPDATE("Endereço não pode ser atualizado, houve um erro de processamento."),
+        ADDRESS_NOT_FOUND("Endereço não encontrado."),
         ADDRESS_NOT_DELETED("Endereço não apagado, verifique as informações e tente novamente."),
         CONTENT_NOT_FOUND("Conteúdo não encontrado."),
         PRODUCT_NOT_FOUND("Produto não encontrado: "),

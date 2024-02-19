@@ -4,15 +4,15 @@ import br.com.jps.cervejariaapi.enums.PaymentMethod;
 import br.com.jps.cervejariaapi.enums.StatusPurchaseOrder;
 import br.com.jps.cervejariaapi.model.Product;
 import br.com.jps.cervejariaapi.model.PurchaseOrder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PurchaseOrderDTO {
 
     private Long id;
@@ -41,6 +41,7 @@ public class PurchaseOrderDTO {
             productDTO.setDescription(item.getDescription());
             productDTO.setPrice(item.getPrice());
             productDTO.setCategoryId(item.getCategoryId());
+            productDTO.setQuantity(purchaseOrder.getQuantity());
             productDTO.setId(item.getId());
             this.productList.add(productDTO);
         });
@@ -63,6 +64,7 @@ public class PurchaseOrderDTO {
             productDTO.setDescription(item.getDescription());
             productDTO.setPrice(item.getPrice());
             productDTO.setCategoryId(item.getCategoryId().getId());
+            productDTO.setQuantity(purchaseOrder.getQuantity());
             productDTO.setId(item.getId());
             this.productList.add(productDTO);
         });

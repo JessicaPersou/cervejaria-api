@@ -3,6 +3,7 @@ package br.com.jps.cervejariaapi.controller;
 import br.com.jps.cervejariaapi.business.PurchaseOrderBusiness;
 import br.com.jps.cervejariaapi.dto.PurchaseOrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class PurchaseOrderController {
 
     @PostMapping
     public ResponseEntity<PurchaseOrderDTO> createPurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
-        return ResponseEntity.ok(purchaseOrderBusiness.newPurchaseOrder(purchaseOrderDTO));
+        PurchaseOrderDTO purchaseOrder = purchaseOrderBusiness.newPurchaseOrder(purchaseOrderDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrder);
     }
 }

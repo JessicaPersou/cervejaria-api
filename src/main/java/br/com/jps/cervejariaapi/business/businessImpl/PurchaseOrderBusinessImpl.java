@@ -34,10 +34,9 @@ public class PurchaseOrderBusinessImpl implements PurchaseOrderBusiness {
     @Autowired
     AddressRepository addressRepository;
 
+    @Override
     public List<PurchaseOrderDTO> findAllOrders() {
-        //busca a lista de pedidos
         List<PurchaseOrder> purchaseOrderList = purchaseOrderRepository.findAll();
-        //instancia uma lista de pedidos dto vazia para ser iterado e retornada depois
         List<PurchaseOrderDTO> orderDTOS = new ArrayList<>();
 
         for(PurchaseOrder purchaseOrder: purchaseOrderList){
@@ -45,24 +44,29 @@ public class PurchaseOrderBusinessImpl implements PurchaseOrderBusiness {
             PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO(purchaseOrder, productList);
             orderDTOS.add(purchaseOrderDTO);
         }
-
         return orderDTOS;
     }
 
+    @Override
     public PurchaseOrderDTO purchaseById(Long id){
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(id).orElseThrow(()-> new ErrorMessageException(ErrorMessageException.Message.ORDER_NOT_FOUND.getMessage()));
         List<Product> productList = purchaseOrder.getProductList();
         return new PurchaseOrderDTO(purchaseOrder, productList);
     }
 
+    @Override
     public PurchaseOrderDTO newPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) {
-        Client client = clientRepository.findById(purchaseOrderDTO.getClientId()).orElseThrow();
-        Address address = addressRepository.findById(purchaseOrderDTO.getAddressId()).orElseThrow();
+        Client client = clientRepository.findById(purchaseOrderDTO.getClientId()).orElseThrow(() -> new ErrorMessageException(
+                ErrorMessageException.Message.CLIENT_NOT_FOUND.getMessage()));
+        Address address = addressRepository.findById(purchaseOrderDTO.getAddressId()).orElseThrow(() -> new ErrorMessageException(
+                ErrorMessageException.Message.ADDRESS_NOT_FOUND.getMessage()));
 
         if (client.getProfileState() == ProfileState.ACTIVE) {
 
             List<Product> productList = new ArrayList<>();
+            PurchaseOrder purchaseOrder = new PurchaseOrder();
             double totalPrice = 0;
+            int totalQuantity = 0;
 
             for (ProductDTO productDTO : purchaseOrderDTO.getProductList()) {
                 Product product = productRepository.findById(productDTO.getId()).orElseThrow(() -> new ErrorMessageException(
@@ -79,12 +83,14 @@ public class PurchaseOrderBusinessImpl implements PurchaseOrderBusiness {
                 productDTO.setName(product.getName());
                 productDTO.setDescription(product.getDescription());
                 productDTO.setCategoryId(product.getCategoryId().getId());
-
                 totalPrice += product.getPrice();
                 productDTO.setPrice(product.getPrice());
 
                 productList.add(product);
+                totalQuantity += 1;
             }
+
+            purchaseOrder.setQuantity(totalQuantity);
 
             DecimalFormat df = new DecimalFormat("#,##0.00");
             String priceFormatDecimal = df.format(totalPrice);
@@ -92,11 +98,10 @@ public class PurchaseOrderBusinessImpl implements PurchaseOrderBusiness {
 
             double formattedPrice = Double.parseDouble(priceFormatDecimal.replace(",", "."));
 
-            purchaseOrderDTO.setTotalPrice(formattedPrice);
+            purchaseOrder.setTotalPrice(formattedPrice);
 
-            PurchaseOrder purchaseOrder = new PurchaseOrder();
             LocalDate date = LocalDate.now();
-            purchaseOrderDTO.setDtOrder(date);
+            purchaseOrder.setDtOrder(date);
             purchaseOrder.setStatus(StatusPurchaseOrder.PENDENT);
             purchaseOrder.setPaymentMethod(purchaseOrderDTO.getPaymentMethod());
             purchaseOrder.setProductList(productList);
@@ -106,8 +111,8 @@ public class PurchaseOrderBusinessImpl implements PurchaseOrderBusiness {
 
             PurchaseOrder orderSaved = purchaseOrderRepository.save(purchaseOrder);
             purchaseOrderDTO.setId(orderSaved.getId());
-
-            return purchaseOrderDTO;
+//TODO: Corrigir a quantidade de produtos comprados que exibe na API
+            return new PurchaseOrderDTO(purchaseOrder, productList);
         }
         throw new RuntimeException("Cliente inativo");
     }

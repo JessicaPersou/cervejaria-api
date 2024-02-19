@@ -25,7 +25,6 @@ public class PurchaseOrder {
 
         @Enumerated(EnumType.STRING)
         @Column(name = "payment_method")
-        @NotNull(message = "Campo não pode ser vazio ou nulo")
         private PaymentMethod paymentMethod;
 
         @Column(name = "dt_order")
@@ -35,7 +34,7 @@ public class PurchaseOrder {
         @Column(name = "status_order")
         private StatusPurchaseOrder status;
 
-        @Column(name = "quantity", nullable = false)
+        @Column(name = "quantity")
         private int quantity;
 
         @Column(name = "total_price")
